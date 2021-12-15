@@ -10,8 +10,8 @@ using OnlineStore.Data;
 namespace OnlineStore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211205033616_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20211211015652_CreateInitial")]
+    partial class CreateInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,9 +23,10 @@ namespace OnlineStore.Migrations
 
             modelBuilder.Entity("OnlineStore.Models.Product", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -34,6 +35,9 @@ namespace OnlineStore.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("ProductTypeId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ProductUrl")
                         .IsRequired()
@@ -47,9 +51,6 @@ namespace OnlineStore.Migrations
                     b.Property<int>("StockAmount")
                         .HasColumnType("int");
 
-                    b.Property<int>("TypeId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -57,6 +58,8 @@ namespace OnlineStore.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductTypeId");
 
                     b.ToTable("Product");
                 });
@@ -93,8 +96,8 @@ namespace OnlineStore.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CPF")
                         .IsRequired()
@@ -102,9 +105,12 @@ namespace OnlineStore.Migrations
                         .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Cellphone")
-                        .IsRequired()
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -118,6 +124,10 @@ namespace OnlineStore.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
+                    b.Property<string>("Neighborhood")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -127,12 +137,25 @@ namespace OnlineStore.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<string>("UF")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("OnlineStore.Models.Product", b =>
+                {
+                    b.HasOne("OnlineStore.Models.ProductType", "ProductType")
+                        .WithMany()
+                        .HasForeignKey("ProductTypeId");
+
+                    b.Navigation("ProductType");
                 });
 #pragma warning restore 612, 618
         }

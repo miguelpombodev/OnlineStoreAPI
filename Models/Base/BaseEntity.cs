@@ -1,18 +1,21 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using OnlineStore.Data;
-using OnlineStore.Shared.Interfaces;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnlineStore.Models.Base
 {
-  public class BaseEntity
-  {
-    [Required(ErrorMessage = "This field is required")]
-    [DataType(DataType.DateTime)]
-    public DateTime CreatedAt { get; set; }
+    public abstract class BaseEntity
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
 
-    [Required(ErrorMessage = "This field is required")]
-    [DataType(DataType.DateTime)]
-    public DateTime UpdatedAt { get; set; }
-  }
+        [Required(ErrorMessage = "This field is required")]
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedAt { get; set; }
+
+        [Required(ErrorMessage = "This field is required")]
+        [DataType(DataType.DateTime)]
+        public DateTime UpdatedAt { get; set; }
+    }
 }
