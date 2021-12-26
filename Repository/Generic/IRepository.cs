@@ -12,6 +12,6 @@ namespace OnlineStore.Repository.Generic
     Task<T> GetByID(Guid id);
     Task<List<T>> GetAll();
     Task<T> Update(Guid id, T item);
-    void Delete(Guid id);
+    Task<bool> Delete(Guid id);
   }
 }

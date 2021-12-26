@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OnlineStore.Data;
 using OnlineStore.Business.Implementations;
-using OnlineStore.Repository.Implementations;
 using OnlineStore.Repository.Generic;
 
 namespace OnlineStore

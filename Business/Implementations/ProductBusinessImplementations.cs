@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using OnlineStore.Data;
-
 using OnlineStore.Models;
 using OnlineStore.Repository.Generic;
-using OnlineStore.Repository.Implementations;
+
+
 
 namespace OnlineStore.Business.Implementations
 {
@@ -24,8 +22,13 @@ namespace OnlineStore.Business.Implementations
 
             var productExists = await _repository.Create(product);
 
+            if (productExists == null)
+            {
+                return null;
+            }
+
             return productExists;
-            
+
         }
 
         public async Task<List<Product>> GetAll()
@@ -56,9 +59,16 @@ namespace OnlineStore.Business.Implementations
             return productExists;
         }
 
-        public async void Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            _repository.Delete(id);
+            var isProductDeleted = await _repository.Delete(id);
+
+            if (isProductDeleted == false)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

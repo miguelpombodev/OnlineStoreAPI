@@ -11,6 +11,6 @@ namespace OnlineStore.Business.Implementations
     Task<Product> GetByID(Guid id);
     Task<List<Product>> GetAll();
     Task<Product> Update(Guid id, Product product);
-    void Delete(Guid id);
+    Task<bool> Delete(Guid id);
   }
 }

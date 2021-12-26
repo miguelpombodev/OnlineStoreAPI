@@ -3,7 +3,6 @@ using OnlineStore.Data;
 using OnlineStore.Models.Base;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace OnlineStore.Repository.Generic
@@ -23,12 +22,14 @@ namespace OnlineStore.Repository.Generic
 
         public async Task<dynamic> Create(T item)
         {
-            var itemExists = dataset.SingleOrDefaultAsync(p => p.Id.Equals(item.Id));
+            item.Id = Guid.NewGuid();
+            var itemExists = await dataset.SingleOrDefaultAsync(p => p.Id.Equals(item.Id));
 
             if (itemExists != null)
             {
-                return new { message = "O produto já existe" };
+                return null;
             }
+
 
             try
             {
@@ -37,30 +38,31 @@ namespace OnlineStore.Repository.Generic
 
                 return item;
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
-
                 throw;
             }
         }
 
-        public void Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            //var product = await _context.Product.FirstOrDefaultAsync(product => product.Id == id);
+            var product = await _context.Product.FirstOrDefaultAsync(product => product.Id == id);
 
-            //if (product != null)
-            //{
-            //    try
-            //    {
-            //        _context.Product.Remove(product);
-            //        await _context.SaveChangesAsync();
-            //    }
-            //    catch (System.Exception)
-            //    {
-            //        throw;
-            //    }
-            //}
-            throw new NotImplementedException();
+            if (product != null)
+            {
+                try
+                {
+                    _context.Product.Remove(product);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                catch (System.Exception ex)
+                {
+                    throw ex;
+                }
+            }
+
+            return false;
         }
 
         public async Task<List<T>> GetAll()
@@ -84,36 +86,22 @@ namespace OnlineStore.Repository.Generic
 
         public async Task<T> Update(Guid id, T item)
         {
-            item.Id = id;
-
-            var itemExists = await _context.Product.SingleOrDefaultAsync(x => x.Id == item.Id);
-
-            if (itemExists == null)
-            {
-                return null;
-            }
-
             try
             {
-                _context.Entry(itemExists).CurrentValues.SetValues(item);
+                _context.Entry<T>(item).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 var updatedItem = await GetByID(item.Id);
 
                 return updatedItem;
             }
+            catch (DbUpdateConcurrencyException db)
+            {
+                throw db;
+            }
             catch (System.Exception ex)
             {
                 throw ex;
             }
-            // }
-            // catch (DbUpdateConcurrencyException)
-            // {
-            //   return BadRequest(new { message = "Este registro já foi atualizado" });
-            // }
-            // catch (Exception)
-            // {
-            //   return BadRequest(new { message = "Não foi possível atualizar a categoria" });
-            // }
         }
     }
 }
